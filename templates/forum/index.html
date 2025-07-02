@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная — MiniForum{% endblock %}
+
+{% block content %}
+<h2>Темы форума</h2>
+
+{% if user.is_authenticated %}
+<a href="{% url 'create_topic' %}" class="btn btn-primary mb-3">+ Новая тема</a>
+{% endif %}
+
+{% for topic in topics %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="{% url 'topic_detail' pk=topic.pk %}">
+                {{ topic.title }}
+            </a>
+        </h5>
+        <h6 class="card-subtitle mb-2 text-muted">
+            Категория: {{ topic.category.name }} |
+            Автор: {{ topic.author.username }} |
+            {{ topic.created_at|date:"d.m.Y H:i" }}
+        </h6>
+        {% if topic.image %}
+        <img src="{{ topic.image.url }}" class="img-fluid mt-2" style="max-height: 300px;">
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<p>Нет тем для отображения.</p>
+{% endfor %}
+{% endblock %}
