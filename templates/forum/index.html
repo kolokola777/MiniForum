@@ -3,38 +3,41 @@
 {% block title %}Главная — MiniForum{% endblock %}
 
 {% block content %}
-<h2>Темы форума</h2>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Разделы форума</h2>
+    {% if user.is_authenticated %}
+      <a href="{% url 'create_topic' %}" class="btn btn-primary">+ Создать тему</a>
+    {% endif %}
+  </div>
 
-{% if user.is_authenticated %}
-<a href="{% url 'create_topic' %}" class="btn btn-primary mb-3">+ Новая тема</a>
-{% endif %}
-
-{% for topic in topics %}
-<div class="card mb-3">
-    <div class="card-body">
-        <h5 class="card-title">
-            <a href="{% url 'topic_detail' pk=topic.pk %}">
-                {{ topic.title }}
-            </a>
-        </h5>
-        <h6 class="card-subtitle mb-2 text-muted">
-            Категория: {{ topic.category.name }} |
-            Автор: {{ topic.author.username }} |
-            {{ topic.created_at|date:"d.m.Y H:i" }}
-        </h6>
-
-        {% if topic.image %}
-        <img src="{{ topic.image.url }}" class="img-fluid mt-2" style="max-height: 300px;">
-        {% endif %}
-
-        <p class="mt-2">
-            👁 <strong>{{ topic.views }}</strong> |
-            ❤️ <strong>{{ topic.total_likes }}</strong>
-        </p>
+  <div class="row">
+    {% for category in categories %}
+    <div class="col-md-6 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{% url 'category_detail' category.id %}">{{ category.name }}</a>
+          </h5>
+          {% if category.description %}
+            <p class="card-text text-muted">{{ category.description }}</p>
+          {% endif %}
+        </div>
+        <div class="card-footer text-muted">
+          {{ category.topic_set.count }} тем
+        </div>
+      </div>
     </div>
-</div>
-{% empty %}
-<p>Нет тем для отображения.</p>
-{% endfor %}
+    {% empty %}
+      <p class="text-muted">Категорий пока нет.</p>
+    {% endfor %}
+  </div>
 
+  <hr>
+  <div class="text-muted">
+    <p>Всего тем: {{ stats.topics }}</p>
+    <p>Всего сообщений: {{ stats.posts }}</p>
+    <p>Пользователей: {{ stats.users }}</p>
+  </div>
+</div>
 {% endblock %}

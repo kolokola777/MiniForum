@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} — Темы{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">{{ category.name }}</h2>
+
+    <table class="table table-hover">
+        <thead class="thead-light">
+        <tr>
+            <th>Автор</th>
+            <th>Тема</th>
+            <th>Ответов</th>
+            <th>Просмотров</th>
+            <th>Лайков</th>
+            <th>Последний ответ</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for topic in topics %}
+        <tr>
+            <td class="align-middle text-center">
+                <img src="{{ topic.author.profile.avatar.url }}" class="rounded-circle" width="40" height="40"><br>
+                <small>{{ topic.author.username }}</small>
+            </td>
+            <td class="align-middle">
+                <a href="{% url 'topic_detail' topic.id %}">{{ topic.title }}</a><br>
+                <small class="text-muted">{{ topic.created_at|date:"d.m.Y H:i" }}</small>
+            </td>
+            <td class="align-middle">{{ topic.reply_count }}</td>
+            <td class="align-middle">{{ topic.views }}</td>
+            <td class="align-middle">{{ topic.likes.count }}</td>
+            <td class="align-middle">
+                {% if topic.last_reply %}
+                <img src="{{ topic.last_reply.author.profile.avatar.url }}" class="rounded-circle" width="30"
+                     height="30">
+                <small>{{ topic.last_reply.author.username }}</small><br>
+                <small class="text-muted">{{ topic.last_reply.created_at|date:"d.m.Y H:i" }}</small>
+                {% else %}
+                <span class="text-muted">—</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center text-muted">Тем пока нет</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -2,13 +2,31 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, TopicForm, PostForm
-from .models import Topic, Post
+from .models import Category, Topic, Post
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 
 
 def index(request):
-    topics = Topic.objects.order_by('-created_at')
-    return render(request, 'forum/index.html', {'topics': topics})
+    categories = Category.objects.all()
+    stats = {
+        'topics': Topic.objects.count(),
+        'posts': Post.objects.count(),
+        'users': User.objects.count(),
+    }
+    return render(request, 'forum/index.html', {
+        'categories': categories,
+        'stats': stats
+    })
+
+
+def category_detail(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    topics = category.topic_set.all().order_by('-created_at')
+    return render(request, 'forum/category_detail.html', {
+        'category': category,
+        'topics': topics
+    })
 
 
 def register(request):

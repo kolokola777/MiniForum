@@ -3,37 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}MiniForum{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Стили для "футер всегда снизу" -->
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .content-wrapper {
+        flex: 1;
+      }
+    </style>
 </head>
 <body>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
     <a class="navbar-brand" href="{% url 'index' %}">MiniForum</a>
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ml-auto">
-            {% if user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link" href="#">Привет, {{ user.username }}</a>
-            </li>
-            <li class="nav-item">
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="nav-link btn btn-link">Выйти</button>
-                </form>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Вход</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
-            </li>
-            {% endif %}
-        </ul>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="#">Привет, {{ user.username }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'create_topic' %}">Создать тему</a>
+          </li>
+          <li class="nav-item">
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="nav-link btn btn-link" style="border: none;">Выйти</button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Вход</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+          </li>
+        {% endif %}
+      </ul>
     </div>
+  </div>
 </nav>
 
-<div class="container mt-4">
+<!-- Контент -->
+<div class="container content-wrapper mt-4 mb-5">
     {% block content %}{% endblock %}
 </div>
+
+<!-- Футер -->
+<footer class="bg-dark text-white py-3 mt-auto">
+  <div class="container text-center">
+    <small>© 2025 MiniForum. Да здравствует наш суд, самый гуманный суд в мире!!!</small>
+  </div>
+</footer>
+
+<!-- Bootstrap JS (для навбара на мобилках) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
