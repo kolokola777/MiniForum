@@ -27,6 +27,7 @@
 </head>
 <body>
 
+<!--Навбар-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="{% url 'index' %}">MiniForum</a>
@@ -36,17 +37,22 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
+            <form class="form-inline my-2 my-lg-0 mr-3" method="get" action="{% url 'index' %}">
+                <input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Поиск"
+                       aria-label="Search" name="q" value="{{ query|default:'' }}">
+                <button class="btn btn-outline-light btn-sm my-2 my-sm-0" type="submit">Найти</button>
+            </form>
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
-                <li>
-                    {% if topic.author.profile.avatar %}
-                    <img src="{{ topic.author.profile.avatar.url }}" class="rounded-circle mr-3" width="40" height="40">
+                <li class="nav-item d-flex align-items-center">
+                    {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" class="rounded-circle mr-2" width="40" height="40"
+                         alt="avatar">
                     {% else %}
-                    <img src="/media/avatars/default.png" class="rounded-circle mr-3" width="40" height="40">
+                    <img src="/media/avatars/default.png" class="rounded-circle mr-2" width="40" height="40"
+                         alt="default avatar">
                     {% endif %}
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Привет, {{ user.username }}</a>
+                    <a class="nav-link p-0" href="#">{{ user.username }}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'create_topic' %}">Создать тему</a>
@@ -69,6 +75,7 @@
         </div>
     </div>
 </nav>
+
 
 <!-- Контент -->
 <div class="container content-wrapper mt-4 mb-5">

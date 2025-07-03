@@ -1,23 +1,35 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, TopicForm, PostForm
 from .models import Category, Topic, Post
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.http import HttpResponseForbidden
 
 
 def index(request):
-    # сбор так называемой статистики
     categories = Category.objects.all()
     stats = {
         'topics': Topic.objects.count(),
         'posts': Post.objects.count(),
         'users': User.objects.count(),
     }
+
+    query = request.GET.get('q', '')
+    if query:
+        topics = Topic.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query)
+        ).order_by('-created_at')
+    else:
+        topics = Topic.objects.all().order_by('-created_at')
+
     return render(request, 'forum/index.html', {
         'categories': categories,
-        'stats': stats
+        'stats': stats,
+        'topics': topics,
+        'query': query,
     })
 
 
@@ -89,7 +101,7 @@ def topic_detail(request, pk):
     })
 
 
-# Лайки
+# Лайки для тем
 @login_required
 def like_topic(request, topic_id):
     topic = get_object_or_404(Topic, id=topic_id)
@@ -98,3 +110,68 @@ def like_topic(request, topic_id):
     else:
         topic.likes.add(request.user)
     return redirect('topic_detail', pk=topic.id)
+
+
+# Изменение темы
+@login_required
+def edit_topic(request, topic_id):
+    topic = get_object_or_404(Topic, id=topic_id)
+    if topic.author != request.user:
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        form = TopicForm(request.POST, request.FILES, instance=topic)
+        if form.is_valid():
+            form.save()
+            return redirect('topic_detail', pk=topic.id)
+    else:
+        form = TopicForm(instance=topic)
+    return render(request, 'forum/edit_topic.html', {'form': form, 'topic': topic})
+
+
+# Удаление темы
+@login_required
+def delete_topic(request, topic_id):
+    topic = get_object_or_404(Topic, id=topic_id)
+    if topic.author != request.user:
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        topic.delete()
+        return redirect('index')
+    return render(request, 'forum/delete_topic.html', {'topic': topic})
+
+
+# Изменение комментария
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.author != request.user:
+        return HttpResponseForbidden("Вы не можете редактировать чужой комментарий")
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('topic_detail', pk=post.topic.id)
+    else:
+        form = PostForm(instance=post)
+
+    return render(request, 'forum/edit_post.html', {'form': form, 'post': post})
+
+
+# Удаление комментария
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.author != request.user:
+        return HttpResponseForbidden("Вы не можете удалить чужой комментарий")
+
+    if request.method == 'POST':
+        topic_id = post.topic.id
+        post.delete()
+        return redirect('topic_detail', pk=topic_id)
+
+    return render(request, 'forum/delete_post_confirm.html', {'post': post})

@@ -37,6 +37,13 @@
                 ❤️ Лайки: {{ topic.likes.count }} |
                 👁 Просмотры: {{ topic.views }}
             </div>
+
+            {% if user == topic.author %}
+            <div>
+                <a href="{% url 'edit_topic' topic.id %}" class="btn btn-sm btn-outline-warning">Редактировать</a>
+                <a href="{% url 'delete_topic' topic.id %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+            </div>
+            {% endif %}
             {% if user.is_authenticated %}
             <form action="{% url 'like_topic' topic.id %}" method="post" class="d-inline">
                 {% csrf_token %}
@@ -54,12 +61,21 @@
     <h5>Комментарии</h5>
     {% for post in posts %}
     <div class="media mb-3 p-3 border rounded">
+        {% if post.author.profile.avatar %}
         <img src="{{ post.author.profile.avatar.url }}" class="rounded-circle mr-3" width="40" height="40">
+        {% else %}
+        <img src="/media/avatars/default.png" class="rounded-circle mr-3" width="40" height="40">
+        {% endif %}
         <div class="media-body">
             <h6 class="mt-0">{{ post.author.username }}
                 <small class="text-muted">— {{ post.created_at|date:"d.m.Y H:i" }}</small>
             </h6>
             <p>{{ post.content }}</p>
+
+            {% if user == post.author %}
+            <a href="{% url 'edit_post' post.id %}" class="btn btn-sm btn-outline-primary mr-2">Редактировать</a>
+            <a href="{% url 'delete_post' post.id %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+            {% endif %}
         </div>
     </div>
     {% empty %}

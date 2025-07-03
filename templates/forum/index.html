@@ -10,6 +10,7 @@
         <a href="{% url 'create_topic' %}" class="btn btn-primary">+ Создать тему</a>
         {% endif %}
     </div>
+
     <!-- Отображение карточек с категориями-->
     <div class="row">
         {% for category in categories %}
@@ -32,8 +33,29 @@
         <p class="text-muted">Категорий пока нет.</p>
         {% endfor %}
     </div>
+
+    <!-- Результаты поиска-->
+    {% if query %}
     <hr>
+    <h3>Результаты поиска по запросу "{{ query }}"</h3>
+    {% if topics %}
+    <ul class="list-group mb-4">
+        {% for topic in topics %}
+        <li class="list-group-item">
+            <a href="{% url 'topic_detail' topic.id %}">{{ topic.title }}</a>
+            <br>
+            <small class="text-muted">Категория: {{ topic.category.name }} | Автор: {{ topic.author.username }} | {{
+                topic.created_at|date:"d.m.Y H:i" }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-muted">По вашему запросу ничего не найдено.</p>
+    {% endif %}
+    {% endif %}
+
     <!-- Отображение статистики-->
+    <hr>
     <div class="text-muted">
         <p>Всего тем: {{ stats.topics }}</p>
         <p>Всего сообщений: {{ stats.posts }}</p>
