@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 
 
 def index(request):
+    # сбор так называемой статистики
     categories = Category.objects.all()
     stats = {
         'topics': Topic.objects.count(),
@@ -20,6 +21,7 @@ def index(request):
     })
 
 
+# Категории
 def category_detail(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     topics = category.topic_set.all().order_by('-created_at')
@@ -29,6 +31,7 @@ def category_detail(request, category_id):
     })
 
 
+# Регистрация
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -41,6 +44,7 @@ def register(request):
     return render(request, 'forum/register.html', {'form': form})
 
 
+# Создание темы
 @login_required
 def create_topic(request):
     if request.method == 'POST':
@@ -55,6 +59,7 @@ def create_topic(request):
     return render(request, 'forum/create_topic.html', {'form': form})
 
 
+# Темы
 def topic_detail(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
 
@@ -84,6 +89,7 @@ def topic_detail(request, pk):
     })
 
 
+# Лайки
 @login_required
 def like_topic(request, topic_id):
     topic = get_object_or_404(Topic, id=topic_id)

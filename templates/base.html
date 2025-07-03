@@ -8,59 +8,66 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    <!-- Стили для "футер всегда снизу" -->
+    <!-- Стили для футера чтобы он был снизу -->
     <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-      }
+        html, body {
+          height: 100%;
+          margin: 0;
+        }
 
-      body {
-        display: flex;
-        flex-direction: column;
-      }
+        body {
+          display: flex;
+          flex-direction: column;
+        }
 
-      .content-wrapper {
-        flex: 1;
-      }
+        .content-wrapper {
+          flex: 1;
+        }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'index' %}">MiniForum</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">MiniForum</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="#">Привет, {{ user.username }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'create_topic' %}">Создать тему</a>
-          </li>
-          <li class="nav-item">
-            <form method="post" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="nav-link btn btn-link" style="border: none;">Выйти</button>
-            </form>
-          </li>
-        {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}">Вход</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
-          </li>
-        {% endif %}
-      </ul>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li>
+                    {% if topic.author.profile.avatar %}
+                    <img src="{{ topic.author.profile.avatar.url }}" class="rounded-circle mr-3" width="40" height="40">
+                    {% else %}
+                    <img src="/media/avatars/default.png" class="rounded-circle mr-3" width="40" height="40">
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Привет, {{ user.username }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create_topic' %}">Создать тему</a>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link btn btn-link" style="border: none;">Выйти</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Вход</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 
 <!-- Контент -->
@@ -70,9 +77,9 @@
 
 <!-- Футер -->
 <footer class="bg-dark text-white py-3 mt-auto">
-  <div class="container text-center">
-    <small>© 2025 MiniForum. Да здравствует наш суд, самый гуманный суд в мире!!!</small>
-  </div>
+    <div class="container text-center">
+        <small>© 2025 MiniForum. Да здравствует наш суд, самый гуманный суд в мире!!!</small>
+    </div>
 </footer>
 
 <!-- Bootstrap JS (для навбара на мобилках) -->

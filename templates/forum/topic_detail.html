@@ -6,74 +6,78 @@
 {% block content %}
 <div class="container mt-4">
 
-  <!-- 🧵 Основная тема -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <div class="d-flex">
-        <img src="{{ topic.author.profile.avatar.url }}" class="rounded-circle mr-3" width="50" height="50">
-        <div>
-          <h4 class="mb-0">{{ topic.title }}</h4>
-          <small class="text-muted">
-            Категория: {{ topic.category.name }} |
-            Автор: {{ topic.author.username }} |
-            {{ topic.created_at|date:"d.m.Y H:i" }}
-          </small>
+    <!-- Основная тема -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex">
+                {% if topic.author.profile.avatar %}
+                <img src="{{ topic.author.profile.avatar.url }}" class="rounded-circle mr-3" width="50" height="50">
+                {% else %}
+                <img src="/media/avatars/default.png" class="rounded-circle mr-3" width="50" height="50">
+                {% endif %}
+                <div>
+                    <h4 class="mb-0">{{ topic.title }}</h4>
+                    <small class="text-muted">
+                        Категория: {{ topic.category.name }} |
+                        Автор: {{ topic.author.username }} |
+                        {{ topic.created_at|date:"d.m.Y H:i" }}
+                    </small>
+                </div>
+            </div>
+
+            <hr>
+            <p class="mt-2">{{ topic.content|linebreaks }}</p>
+
+            {% if topic.image %}
+            <img src="{{ topic.image.url }}" class="img-fluid mt-3" style="max-height: 300px;">
+            {% endif %}
         </div>
-      </div>
-
-      <hr>
-      <p class="mt-2">{{ topic.content|linebreaks }}</p>
-
-      {% if topic.image %}
-        <img src="{{ topic.image.url }}" class="img-fluid mt-3" style="max-height: 300px;">
-      {% endif %}
+        <div class="card-footer text-muted d-flex justify-content-between">
+            <div>
+                ❤️ Лайки: {{ topic.likes.count }} |
+                👁 Просмотры: {{ topic.views }}
+            </div>
+            {% if user.is_authenticated %}
+            <form action="{% url 'like_topic' topic.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                {% if user in topic.likes.all %}
+                <button type="submit" class="btn btn-sm btn-danger">Убрать лайк</button>
+                {% else %}
+                <button type="submit" class="btn btn-sm btn-outline-primary">Лайкнуть ❤️</button>
+                {% endif %}
+            </form>
+            {% endif %}
+        </div>
     </div>
-    <div class="card-footer text-muted d-flex justify-content-between">
-      <div>
-        ❤️ Лайки: {{ topic.likes.count }} |
-        👁 Просмотры: {{ topic.views }}
-      </div>
-      {% if user.is_authenticated %}
-        <form action="{% url 'like_topic' topic.id %}" method="post" class="d-inline">
-          {% csrf_token %}
-          {% if user in topic.likes.all %}
-            <button type="submit" class="btn btn-sm btn-danger">Убрать лайк</button>
-          {% else %}
-            <button type="submit" class="btn btn-sm btn-outline-primary">Лайкнуть ❤️</button>
-          {% endif %}
-        </form>
-      {% endif %}
-    </div>
-  </div>
 
-  <!-- 💬 Комментарии -->
-  <h5>Комментарии</h5>
-  {% for post in posts %}
+    <!-- Комментарии -->
+    <h5>Комментарии</h5>
+    {% for post in posts %}
     <div class="media mb-3 p-3 border rounded">
-      <img src="{{ post.author.profile.avatar.url }}" class="rounded-circle mr-3" width="40" height="40">
-      <div class="media-body">
-        <h6 class="mt-0">{{ post.author.username }}
-          <small class="text-muted">— {{ post.created_at|date:"d.m.Y H:i" }}</small>
-        </h6>
-        <p>{{ post.content }}</p>
-      </div>
+        <img src="{{ post.author.profile.avatar.url }}" class="rounded-circle mr-3" width="40" height="40">
+        <div class="media-body">
+            <h6 class="mt-0">{{ post.author.username }}
+                <small class="text-muted">— {{ post.created_at|date:"d.m.Y H:i" }}</small>
+            </h6>
+            <p>{{ post.content }}</p>
+        </div>
     </div>
-  {% empty %}
+    {% empty %}
     <p class="text-muted">Комментариев пока нет.</p>
-  {% endfor %}
+    {% endfor %}
 
-  <!-- ✍️ Форма комментария -->
-  {% if user.is_authenticated %}
+    <!-- Форма комментария -->
+    {% if user.is_authenticated %}
     <div class="mt-4">
-      <h5>Добавить комментарий</h5>
-      <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button class="btn btn-success">Отправить</button>
-      </form>
+        <h5>Добавить комментарий</h5>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button class="btn btn-success">Отправить</button>
+        </form>
     </div>
-  {% else %}
+    {% else %}
     <p class="mt-3">Чтобы комментировать, <a href="{% url 'login' %}">войдите</a>.</p>
-  {% endif %}
+    {% endif %}
 </div>
 {% endblock %}

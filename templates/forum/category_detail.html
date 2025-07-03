@@ -21,7 +21,11 @@
         {% for topic in topics %}
         <tr>
             <td class="align-middle text-center">
-                <img src="{{ topic.author.profile.avatar.url }}" class="rounded-circle" width="40" height="40"><br>
+                {% if topic.author.profile.avatar %}
+                <img src="{{ topic.author.profile.avatar.url }}" class="rounded-circle mr-3" width="50" height="50">
+                {% else %}
+                <img src="/media/avatars/default.png" class="rounded-circle mr-3" width="50" height="50">
+                {% endif %}<br>
                 <small>{{ topic.author.username }}</small>
             </td>
             <td class="align-middle">
@@ -33,8 +37,11 @@
             <td class="align-middle">{{ topic.likes.count }}</td>
             <td class="align-middle">
                 {% if topic.last_reply %}
-                <img src="{{ topic.last_reply.author.profile.avatar.url }}" class="rounded-circle" width="30"
-                     height="30">
+                {% if topic.author.profile.avatar %}
+                <img src="{{ topic.author.profile.avatar.url }}" class="rounded-circle mr-3" width="50" height="50">
+                {% else %}
+                <img src="/media/avatars/default.png" class="rounded-circle mr-3" width="50" height="50">
+                {% endif %}
                 <small>{{ topic.last_reply.author.username }}</small><br>
                 <small class="text-muted">{{ topic.last_reply.created_at|date:"d.m.Y H:i" }}</small>
                 {% else %}
