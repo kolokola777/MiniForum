@@ -64,11 +64,11 @@ MiniForum — это простой форум на Django с удобным HTM
 ## Installation & Setup
 
 1. Клонировать репозиторий
-   ```
-   bash
-   git clone <адрес_репозитория>
-   cd miniforum
-   ```
+  ```
+  bash
+  git clone <адрес_репозитория>
+  cd miniforum
+  ```
 
 2. Создать и активировать виртуальное окружение
   ```
