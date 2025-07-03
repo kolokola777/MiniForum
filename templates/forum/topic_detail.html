@@ -12,11 +12,30 @@
             Автор: {{ topic.author.username }} |
             {{ topic.created_at|date:"d.m.Y H:i" }}
         </p>
-        {% if topic.image %}
-        <img src="{{ topic.image.url }}" class="img-fluid" style="max-height: 400px;">
-        {% endif %}
+
+        <p>{{ topic.content|linebreaks }}</p>
+
+{% if topic.image %}
+    <img src="{{ topic.image.url }}" class="img-fluid mt-2" style="max-height: 300px;">
+{% endif %}
     </div>
 </div>
+
+<p>
+    Лайки: {{ topic.total_likes }} |
+    Просмотры: {{ topic.views }}
+</p>
+
+{% if user.is_authenticated %}
+<form action="{% url 'like_topic' topic.id %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    {% if user in topic.likes.all %}
+    <button type="submit" class="btn btn-sm btn-danger">Убрать лайк</button>
+    {% else %}
+    <button type="submit" class="btn btn-sm btn-outline-primary">Лайкнуть ❤️</button>
+    {% endif %}
+</form>
+{% endif %}
 
 <h4>Комментарии</h4>
 

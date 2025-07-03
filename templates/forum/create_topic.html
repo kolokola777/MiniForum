@@ -4,10 +4,10 @@
 {% block title %}Новая тема{% endblock %}
 
 {% block content %}
-<h2>Создать новую тему</h2>
+<h2>Создать тему</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
-    <button class="btn btn-success">Опубликовать</button>
+    <button type="submit" class="btn btn-primary">Создать</button>
 </form>
 {% endblock %}

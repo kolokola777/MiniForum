@@ -3,6 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, TopicForm, PostForm
 from .models import Topic, Post
+from django.shortcuts import get_object_or_404
 
 
 def index(request):
@@ -30,7 +31,6 @@ def create_topic(request):
             topic = form.save(commit=False)
             topic.author = request.user
             topic.save()
-            form.save_m2m()
             return redirect('index')
     else:
         form = TopicForm()
@@ -38,7 +38,11 @@ def create_topic(request):
 
 
 def topic_detail(request, pk):
-    topic = Topic.objects.get(pk=pk)
+    topic = get_object_or_404(Topic, pk=pk)
+
+    topic.views += 1
+    topic.save(update_fields=['views'])
+
     posts = Post.objects.filter(topic=topic).order_by('created_at')
 
     if request.method == 'POST':
@@ -60,3 +64,13 @@ def topic_detail(request, pk):
         'posts': posts,
         'form': form
     })
+
+
+@login_required
+def like_topic(request, topic_id):
+    topic = get_object_or_404(Topic, id=topic_id)
+    if request.user in topic.likes.all():
+        topic.likes.remove(request.user)
+    else:
+        topic.likes.add(request.user)
+    return redirect('topic_detail', pk=topic.id)

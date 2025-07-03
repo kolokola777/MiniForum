@@ -22,12 +22,19 @@
             Автор: {{ topic.author.username }} |
             {{ topic.created_at|date:"d.m.Y H:i" }}
         </h6>
+
         {% if topic.image %}
         <img src="{{ topic.image.url }}" class="img-fluid mt-2" style="max-height: 300px;">
         {% endif %}
+
+        <p class="mt-2">
+            👁 <strong>{{ topic.views }}</strong> |
+            ❤️ <strong>{{ topic.total_likes }}</strong>
+        </p>
     </div>
 </div>
 {% empty %}
 <p>Нет тем для отображения.</p>
 {% endfor %}
+
 {% endblock %}

@@ -9,4 +9,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
     path('create/', views.create_topic, name='create_topic'),
     path('topic/<int:pk>/', views.topic_detail, name='topic_detail'),
+    path('topic/<int:topic_id>/like/', views.like_topic, name='like_topic'),
 ]

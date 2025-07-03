@@ -15,7 +15,7 @@ class RegisterForm(UserCreationForm):
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['title', 'category', 'image']
+        fields = ['title', 'content', 'category', 'image']
 
 
 class PostForm(forms.ModelForm):
